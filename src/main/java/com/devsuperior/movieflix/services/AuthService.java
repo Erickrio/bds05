@@ -16,9 +16,8 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    //retorna o usuario autenticado:
-    @Transactional(readOnly = true) //Diz ao BD que é somente leitura e evita lock
-    public User Authenticated() {
+    @Transactional(readOnly = true)
+    public User authenticated() {
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             return userRepository.findByEmail(username);
@@ -28,10 +27,10 @@ public class AuthService {
     }
 
     public void validateSelfOrAdmin(Long userId){
-        User user = Authenticated();//pega usuario autenticado
-        //Testa se não for o proprio usuario e não for o admin
-        if (!user.getId().equals(userId) && !user.hasHole("ROLE_ADMIN")){
-            throw new ForbiddenException("Acces danied");
+        User user = authenticated();
+        //Testa se não for o proprio usuario e não for o membro
+        if (!user.getId().equals(userId) && !user.hasHole("MEMBER")) {
+            throw new ForbiddenException("Access denied");
         }
     }
 }
